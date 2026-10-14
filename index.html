@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>英文選擇題｜Google 試算表題庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      font-family: "Noto Sans TC", sans-serif;
+      color: #17212b;
+      background: #f4f8fb;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-width: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      background: #f4f8fb;
+    }
+    #canvas-holder { width: 100vw; height: 100vh; }
+    #canvas-holder canvas { display: block; }
+    #loading-message, #error-panel {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(760px, calc(100vw - 32px));
+      border-radius: 10px;
+      padding: 12px 16px;
+      line-height: 1.55;
+      box-shadow: 0 3px 14px rgba(23, 50, 77, .16);
+    }
+    #loading-message {
+      top: 14px;
+      color: #17324d;
+      background: #e5f2fb;
+      border: 1px solid #91bdd6;
+      text-align: center;
+    }
+    #sheet-hint {
+      margin-top: 3px;
+      font-size: .92em;
+      color: #46647b;
+    }
+    #error-panel {
+      display: none;
+      bottom: 14px;
+      color: #7f1d1d;
+      background: #fff0f0;
+      border: 2px solid #c62828;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+    #error-panel strong { display: block; margin-bottom: 4px; }
+  </style>
+  <script>
+    // p5.js 或 sketch.js 載入前也能顯示錯誤，避免 loading 訊息永久停留。
+    window.__showEarlyQuizError = function (message) {
+      var loading = document.getElementById('loading-message');
+      if (loading) loading.style.display = 'none';
+      var panel = document.getElementById('error-panel');
+      if (!panel) return;
+      panel.style.display = 'block';
+      panel.innerHTML = '<strong>測驗載入或執行錯誤</strong>' + String(message || '未知錯誤').replace(/[&<>]/g, function (character) {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;'}[character];
+      });
+    };
+    window.addEventListener('error', function (event) {
+      var message = event && event.message ? event.message : 'JavaScript 發生錯誤，請開啟瀏覽器主控台查看詳細資訊。';
+      if (typeof window.showError === 'function') window.showError(message);
+      else window.__showEarlyQuizError(message);
+    });
+    window.addEventListener('unhandledrejection', function (event) {
+      var reason = event && event.reason ? event.reason : '未知原因';
+      if (typeof window.showError === 'function') window.showError('非同步載入錯誤：' + reason);
+      else window.__showEarlyQuizError('非同步載入錯誤：' + reason);
+    });
+  </script>
+</head>
+<body>
+  <div id="canvas-holder"></div>
+  <div id="loading-message" role="status">
+    正在載入 Google 試算表題庫……
+    <div id="sheet-hint">請先在 sketch.js 設定 Google 試算表 CSV 網址。</div>
+  </div>
+  <div id="error-panel" role="alert"></div>
+
+  <!-- 載入 p5.js CDN 與本專案的 sketch.js。 -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"
+          onerror="window.__showEarlyQuizError('p5.js CDN 載入失敗，請確認網路連線。')"></script>
+  <script src="sketch.js"
+          onerror="window.__showEarlyQuizError('找不到 sketch.js，請確認它與 index.html 位於同一個資料夾。')"></script>
+</body>
+</html>
